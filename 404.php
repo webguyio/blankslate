@@ -1,5 +1,5 @@
 <?php get_header(); ?>
-<article id="post-0" class="post not-found">
+<article id="post-0" class="post not-found" role="alert">
 <header class="header">
 <h1 class="entry-title" itemprop="name"><?php esc_html_e( 'Not Found', 'blankslate' ); ?></h1>
 </header>

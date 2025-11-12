@@ -19,9 +19,9 @@ if ( is_front_page() || is_home() || is_front_page() && is_home() ) { echo '</h1
 </div>
 <div id="site-description"<?php if ( !is_single() ) { echo ' itemprop="description"'; } ?>><?php bloginfo( 'description' ); ?></div>
 </div>
-<nav id="menu" role="navigation" itemscope itemtype="https://schema.org/SiteNavigationElement">
+<nav id="menu" role="navigation" aria-label="<?php esc_attr_e( 'Primary Navigation', 'blankslate' ); ?>" itemscope itemtype="https://schema.org/SiteNavigationElement">
 <?php wp_nav_menu( array( 'theme_location' => 'main-menu', 'link_before' => '<span itemprop="name">', 'link_after' => '</span>' ) ); ?>
-<div id="search"><?php get_search_form(); ?></div>
+<div id="search" role="search" aria-label="<?php esc_attr_e( 'Search', 'blankslate' ); ?>"><?php get_search_form(); ?></div>
 </nav>
 </header>
 <div id="container">

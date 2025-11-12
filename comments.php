@@ -8,7 +8,7 @@ if ( !empty( $comments_by_type['comment'] ) ) :
 <section id="comments-list" class="comments">
 <h2 class="comments-title"><?php comments_number(); ?></h2>
 <?php if ( get_comment_pages_count() > 1 ) : ?>
-<nav id="comments-nav-above" class="comments-navigation" role="navigation">
+<nav id="comments-nav-above" class="comments-navigation" role="navigation" aria-label="<?php esc_attr_e( 'Comments Navigation', 'blankslate' ); ?>">
 <div class="paginated-comments-links"><?php paginate_comments_links(); ?></div>
 </nav>
 <?php endif; ?>
@@ -16,7 +16,7 @@ if ( !empty( $comments_by_type['comment'] ) ) :
 <?php wp_list_comments( 'type=comment' ); ?>
 </ul>
 <?php if ( get_comment_pages_count() > 1 ) : ?>
-<nav id="comments-nav-below" class="comments-navigation" role="navigation">
+<nav id="comments-nav-below" class="comments-navigation" role="navigation" aria-label="<?php esc_attr_e( 'Comments Navigation', 'blankslate' ); ?>">
 <div class="paginated-comments-links"><?php paginate_comments_links(); ?></div>
 </nav>
 <?php endif; ?>
@@ -35,6 +35,6 @@ $ping_count = count( $comments_by_type['pings'] );
 <?php
 endif;
 endif;
-if ( comments_open() ) { comment_form(); }
+if ( comments_open() && !post_password_required() ) { comment_form(); }
 ?>
 </div>

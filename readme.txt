@@ -1,6 +1,6 @@
 === BlankSlate ===
 
-Contributors: bhadaway
+Contributors: webguyio
 Donate link: https://opencollective.com/blankslate
 Theme link: https://opencollective.com/blankslate
 Tags: accessibility-ready, one-column, two-columns, custom-menu, featured-images, microformats, sticky-post, threaded-comments, translation-ready
@@ -24,7 +24,7 @@ Learn about more ways to use BlankSlate and precautions to take at: https://blan
 
 In its unchanged and original state:
 
-BlankSlate WordPress Theme 2011-2025
+BlankSlate WordPress Theme 2011-2026
 BlankSlate is distributed under the terms of the GNU GPL
 
 The BlankSlate theme package and all files contained within are distributed under the terms of the GNU GPL v3 or Later (https://www.gnu.org/licenses/gpl.html).

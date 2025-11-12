@@ -3,29 +3,38 @@ add_action( 'after_setup_theme', 'blankslate_setup' );
 function blankslate_setup() {
 load_theme_textdomain( 'blankslate', get_template_directory() . '/languages' );
 add_theme_support( 'title-tag' );
-add_theme_support( 'post-thumbnails' );
-add_theme_support( 'responsive-embeds' );
 add_theme_support( 'automatic-feed-links' );
-add_theme_support( 'html5', array( 'search-form', 'navigation-widgets' ) );
+add_theme_support( 'post-thumbnails' );
+add_theme_support( 'custom-logo' );
+add_theme_support( 'html5', array( 'search-form', 'comment-list', 'comment-form', 'gallery', 'caption', 'style', 'script', 'navigation-widgets' ) );
+add_theme_support( 'responsive-embeds' );
+add_theme_support( 'align-wide' );
+add_theme_support( 'wp-block-styles' );
+add_theme_support( 'editor-styles' );
+add_editor_style( 'editor-style.css' );
 add_theme_support( 'appearance-tools' );
 add_theme_support( 'woocommerce' );
 global $content_width;
-if ( !isset( $content_width ) ) { $content_width = 1920; }
+if ( !isset( $content_width ) ) {
+$content_width = 1920;
+}
 register_nav_menus( array( 'main-menu' => esc_html__( 'Main Menu', 'blankslate' ) ) );
 }
 add_action( 'admin_notices', 'blankslate_notice' );
 function blankslate_notice() {
 $user_id = get_current_user_id();
-$admin_url = ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http' ) . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-$param = ( count( $_GET ) ) ? '&' : '?';
-if ( !get_user_meta( $user_id, 'blankslate_notice_dismissed_12' ) && current_user_can( 'manage_options' ) )
-echo '<div class="notice notice-info"><p><a href="' . esc_url( $admin_url ), esc_html( $param ) . 'dismiss" class="alignright" style="text-decoration:none"><big>' . esc_html__( 'Ⓧ', 'blankslate' ) . '</big></a>' . wp_kses_post( __( '<big><strong>🏆 Thank you for using BlankSlate!</strong></big>', 'blankslate' ) ) . '<p>' . esc_html__( 'Powering over 10k websites! Buy me a sandwich! 🥪', 'blankslate' ) . '</p><a href="https://github.com/webguyio/blankslate/issues/57" class="button-primary" target="_blank"><strong>' . esc_html__( 'How do you use BlankSlate?', 'blankslate' ) . '</strong></a> <a href="https://opencollective.com/blankslate" class="button-primary" style="background-color:green;border-color:green" target="_blank"><strong>' . esc_html__( 'Donate', 'blankslate' ) . '</strong></a> <a href="https://wordpress.org/support/theme/blankslate/reviews/#new-post" class="button-primary" style="background-color:purple;border-color:purple" target="_blank"><strong>' . esc_html__( 'Review', 'blankslate' ) . '</strong></a> <a href="https://github.com/webguyio/blankslate/issues" class="button-primary" style="background-color:orange;border-color:orange" target="_blank"><strong>' . esc_html__( 'Support', 'blankslate' ) . '</strong></a></p></div>';
+if ( !$user_id || !current_user_can( 'manage_options' ) || get_user_meta( $user_id, 'blankslate_notice_dismissed_2026', true ) ) {
+return;
+}
+$dismiss_url = add_query_arg( array( 'blankslate_dismiss' => '1', 'blankslate_nonce' => wp_create_nonce( 'blankslate_dismiss_notice' ) ), admin_url() );
+echo '<div class="notice notice-info"><p><a href="' . esc_url( $dismiss_url ) . '" class="alignright" style="text-decoration:none"><big>' . esc_html__( '×', 'blankslate' ) . '</big></a><big><strong>' . esc_html__( '📝 Thank you for using BlankSlate!', 'blankslate' ) . '</strong></big><p>' . esc_html__( 'Powering over 10k websites! Buy me a sandwich! 🥪', 'blankslate' ) . '</p><a href="https://github.com/webguyio/blankslate/issues/57" class="button-primary" target="_blank" rel="noopener noreferrer"><strong>' . esc_html__( 'How do you use BlankSlate?', 'blankslate' ) . '</strong></a> <a href="https://opencollective.com/blankslate" class="button-primary" style="background-color:green;border-color:green" target="_blank" rel="noopener noreferrer"><strong>' . esc_html__( 'Donate', 'blankslate' ) . '</strong></a> <a href="https://wordpress.org/support/theme/blankslate/reviews/#new-post" class="button-primary" style="background-color:purple;border-color:purple" target="_blank" rel="noopener noreferrer"><strong>' . esc_html__( 'Review', 'blankslate' ) . '</strong></a> <a href="https://github.com/webguyio/blankslate/issues" class="button-primary" style="background-color:orange;border-color:orange" target="_blank" rel="noopener noreferrer"><strong>' . esc_html__( 'Support', 'blankslate' ) . '</strong></a></p></div>';
 }
 add_action( 'admin_init', 'blankslate_notice_dismissed' );
 function blankslate_notice_dismissed() {
 $user_id = get_current_user_id();
-if ( isset( $_GET['dismiss'] ) )
-add_user_meta( $user_id, 'blankslate_notice_dismissed_12', 'true', true );
+if ( isset( $_GET['blankslate_dismiss'], $_GET['blankslate_nonce'] ) && wp_verify_nonce( $_GET['blankslate_nonce'], 'blankslate_dismiss_notice' ) && current_user_can( 'manage_options' ) ) {
+add_user_meta( $user_id, 'blankslate_notice_dismissed_2026', 'true', true );
+}
 }
 add_action( 'wp_enqueue_scripts', 'blankslate_enqueue' );
 function blankslate_enqueue() {
@@ -36,32 +45,37 @@ add_action( 'wp_footer', 'blankslate_footer' );
 function blankslate_footer() {
 ?>
 <script>
-jQuery(document).ready(function($) {
-var deviceAgent = navigator.userAgent.toLowerCase();
-if (deviceAgent.match(/(iphone|ipod|ipad)/)) {
-$("html").addClass("ios");
-$("html").addClass("mobile");
+(function() {
+const ua = navigator.userAgent.toLowerCase();
+const html = document.documentElement;
+if (/(iphone|ipod|ipad)/.test(ua)) {
+html.classList.add('ios', 'mobile');
 }
-if (deviceAgent.match(/(Android)/)) {
-$("html").addClass("android");
-$("html").addClass("mobile");
+else if (/android/.test(ua)) {
+html.classList.add('android', 'mobile');
 }
-if (navigator.userAgent.search("MSIE") >= 0) {
-$("html").addClass("ie");
+else {
+html.classList.add('desktop');
 }
-else if (navigator.userAgent.search("Chrome") >= 0) {
-$("html").addClass("chrome");
+if (/chrome/.test(ua) && !/edg|brave/.test(ua)) {
+html.classList.add('chrome');
 }
-else if (navigator.userAgent.search("Firefox") >= 0) {
-$("html").addClass("firefox");
+else if (/safari/.test(ua) && !/chrome/.test(ua)) {
+html.classList.add('safari');
 }
-else if (navigator.userAgent.search("Safari") >= 0 && navigator.userAgent.search("Chrome") < 0) {
-$("html").addClass("safari");
+else if (/edg/.test(ua)) {
+html.classList.add('edge');
 }
-else if (navigator.userAgent.search("Opera") >= 0) {
-$("html").addClass("opera");
+else if (/firefox/.test(ua)) {
+html.classList.add('firefox');
 }
-});
+else if (/brave/.test(ua)) {
+html.classList.add('brave');
+}
+else if (/opr|opera/.test(ua)) {
+html.classList.add('opera');
+}
+})();
 </script>
 <?php
 }
@@ -151,7 +165,7 @@ wp_enqueue_script( 'comment-reply' );
 }
 function blankslate_custom_pings( $comment ) {
 ?>
-<li <?php comment_class(); ?> id="li-comment-<?php comment_ID(); ?>"><?php echo esc_url( comment_author_link() ); ?></li>
+<li <?php comment_class(); ?> id="li-comment-<?php comment_ID(); ?>"><?php comment_author_link(); ?></li>
 <?php
 }
 add_filter( 'get_comments_number', 'blankslate_comment_count', 0 );
